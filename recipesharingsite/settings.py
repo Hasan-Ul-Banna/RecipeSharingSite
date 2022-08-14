@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     #local_app
-    'home',
     'recipe',
     'user',
 ]
