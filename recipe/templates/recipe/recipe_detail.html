@@ -1,0 +1,45 @@
+{% extends 'base.html'%}
+
+{% block content %}
+<div class="col-8 mx-auto">
+    <div class="card mb-3">
+    <img src="https://mdbcdn.b-cdn.net/img/new/slides/041.webp" class="card-img-top" alt="Wild Landscape"/>
+    <div class="card-body">
+      <h3 class="card-title">{{recipe.title}}</h3>
+      <h6 class="card-title, text-muted mb-4">Posted by {{recipe.owner}}</h6>
+      <p class="card-text">
+        {{recipe.recipe_text}}
+      </p>
+      <p class="card-text">
+        <small class="text-muted">Posted on {{recipe.date_posted}}</small>
+      </p>
+    </div>
+  </div>
+  <h4 class="mb-3">Comments</h4>
+  <form action="{% url 'recipe:comment_create' %}" method="POST">
+    {% csrf_token %}
+  <div class="mb-3">
+    <label for="exampleFormControlTextarea1" class="form-label">Write Comment</label>
+    <input type="hidden" name="recipe" value="{{ recipe.pk }}">
+    <textarea name="comment" class="form-control" id="exampleFormControlTextarea1" rows="2"></textarea>
+    <button class="btn btn-primary btn-sm mt-2">Submit</button>
+  </div>
+  </form>
+  <div class="mt-5">
+    
+  </div>
+{% for comment in  comments %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h6 class="card-title">{{comment.comment_owner}} :</h6>
+      <p class="card-text">{{ comment.comment }}</p>
+    </div>
+  </div>
+  {% endfor %}
+  </div>
+
+  <div class="mb-5" style="height: 100px;">
+   
+    
+  </div>
+{% endblock %}

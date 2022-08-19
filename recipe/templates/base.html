@@ -1,14 +1,72 @@
+{% load static %}
+{% load django_bootstrap5 %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Recipe Sharing Site</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-    {% block content %}
+    <header class="p-3 mb-3 border-bottom">
+        <div class="container">
+          <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
     
-    {% endblock %}
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+              <li><a href="{% url 'recipe:newsfeed' %}" class="nav-link px-2 link-secondary">Recipe Sharing Site</a></li>
+              <li><a href="{% url 'user:registration' %}" class="nav-link px-2 link-dark">Register</a></li>
+              <li><a href="#" class="nav-link px-2 link-dark">Customers</a></li>
+              <li><a href="#" class="nav-link px-2 link-dark">Products</a></li>
+            </ul>
+    
+            {% if request.user.is_authenticated %}
+            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+              <input type="search" class="form-control" placeholder="Search User or Recipe" aria-label="Search">
+            </form>
+            <div class="dropdown text-end">
+              <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="{{ request.user.profile_picture.url }}" alt="mdo" width="32" height="32" class="rounded-circle">
+              </a>
+              <ul class="dropdown-menu text-small">
+                <li><a class="dropdown-item" href="#">New project...</a></li>
+                <li><a class="dropdown-item" href="#">Settings</a></li>
+                <li><a class="dropdown-item" href="{% url 'user:user_profile' request.user.username %}">Profile</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{% url 'user:logout'%}">Sign out</a></li>
+              </ul>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </header>
+
+      <div class = 'container'>
+      {% block content %} {% endblock content %}
+      <div style="height: 100px;"></div>
+      <nav class="navbar fixed-bottom navbar-expand-sm navbar-light bg-light">
+        <div class="container-fluid">
+          <span class="navbar-brand" href="#">Recipe Sharing Site</span>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <span class="nav-text" aria-current="page" href="#">© 2022 Cryptic, Inc. All rights reserved.</span>
+              </li>
+              
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+
 </body>
 </html>

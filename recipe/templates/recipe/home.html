@@ -1,5 +1,23 @@
 {% extends 'base.html'%}
 
 {% block content %}
-    This is my homepage
+{% for recipe in recipes %}
+<div class="col-8 mx-auto">
+    <a href="{% url 'recipe:recipe_detail' recipe.pk %}" class="text-decoration-none text-dark">
+    <div class="card mb-3">
+    <img src="https://mdbcdn.b-cdn.net/img/new/slides/041.webp" class="card-img-top" alt="Wild Landscape"/>
+    <div class="card-body">
+      <h3 class="card-title">{{recipe.title}}</h3>
+      <h6 class="card-title, text-muted mb-4">Posted by {{recipe.owner}}</h6>
+      <p class="card-text">
+        {{recipe.recipe_text | truncatechars:500}}
+      </p>
+      <p class="card-text">
+        <small class="text-muted">Posted on {{recipe.date_posted}}}</small>
+      </p>
+    </div>
+  </div>
+  </a>
+  </div>
+{% endfor %}
 {% endblock %}
