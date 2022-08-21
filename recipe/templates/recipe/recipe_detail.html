@@ -1,18 +1,45 @@
 {% extends 'base.html'%}
 
+
 {% block content %}
+
+
 <div class="col-8 mx-auto">
     <div class="card mb-3">
+    {% if recipe.picture %}
+    <img src="{{ recipe.picture.url }}" class="card-img-top" alt="Wild Landscape"/>
+    {% else %}
     <img src="https://mdbcdn.b-cdn.net/img/new/slides/041.webp" class="card-img-top" alt="Wild Landscape"/>
+    {% endif %}
     <div class="card-body">
       <h3 class="card-title">{{recipe.title}}</h3>
-      <h6 class="card-title, text-muted mb-4">Posted by {{recipe.owner}}</h6>
+      <h6 class="card-title, text-muted mb-1">Posted by @{{recipe.owner}}</h6>
+      <h6 class="card-title, text-muted mb-4">Rating {{rating}}</h6>
       <p class="card-text">
-        {{recipe.recipe_text}}
+        {{recipe.recipe_text | linebreaks}}
       </p>
       <p class="card-text">
-        <small class="text-muted">Posted on {{recipe.date_posted}}</small>
+        <small class="text-muted">Posted on {{recipe.date_posted}} </small>
       </p>
+      {% if request.user != recipe.owner and not has_rated %}
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Rating
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="{% url 'recipe:rating_post' 1 recipe.id %}">1 star</a>
+            <a class="dropdown-item" href="{% url 'recipe:rating_post' 2 recipe.id %}">2 stars</a>
+            <a class="dropdown-item" href="{% url 'recipe:rating_post' 3 recipe.id %}">3 stars</a>
+            <a class="dropdown-item" href="{% url 'recipe:rating_post' 4 recipe.id %}">4 stars</a>
+            <a class="dropdown-item" href="{% url 'recipe:rating_post' 5 recipe.id %}">5 stars</a>
+          </div>
+        </div>
+      {% endif %}
+      {% if request.user == recipe.owner %}
+      <a href="{% url 'recipe:recipe_update' recipe.id %}"> Edit Recipe</a>
+      <span class="me-2"></span>
+      <a href="{% url 'recipe:recipe_delete' recipe.id %}"> Delete Recipe</a>
+      {% endif %}
     </div>
   </div>
   <h4 class="mb-3">Comments</h4>
@@ -31,8 +58,11 @@
 {% for comment in  comments %}
   <div class="card mb-3">
     <div class="card-body">
-      <h6 class="card-title">{{comment.comment_owner}} :</h6>
-      <p class="card-text">{{ comment.comment }}</p>
+      <h6 class="card-title">@{{comment.comment_owner}} :</h6>
+      <pre class="card-text">{{ comment.comment}}</pre>
+      {% if request.user == comment.comment_owner or request.user == recipe.owner %}
+      <a href="{% url 'recipe:comment_delete' comment.id %}"> Delete </a>
+      {% endif %}
     </div>
   </div>
   {% endfor %}

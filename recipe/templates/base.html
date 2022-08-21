@@ -13,33 +13,43 @@
     <title>Recipe Sharing Site</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    {% block extra_head %} {% endblock %}
 </head>
-<body>
+<body class="bg-white">
     <header class="p-3 mb-3 border-bottom">
         <div class="container">
           <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
     
             <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-              <li><a href="{% url 'recipe:newsfeed' %}" class="nav-link px-2 link-secondary">Recipe Sharing Site</a></li>
-              <li><a href="{% url 'user:registration' %}" class="nav-link px-2 link-dark">Register</a></li>
-              <li><a href="#" class="nav-link px-2 link-dark">Customers</a></li>
-              <li><a href="#" class="nav-link px-2 link-dark">Products</a></li>
+              <div class="me-3 d-flex align-items-center">
+                <i><img src="{% static 'images/site_logo.webp' %}" width=45px height=45px
+                    alt="Login image" ></i>
+                <a class="me-3 text-decoration-none link-dark"  href="{% url 'recipe:newsfeed' %}">
+                  <span class=" fw-bold ">Recipe Sharing Site</span>
+                </a>
+              {% if request.user.is_authenticated %}
+              <li><a href="{% url 'recipe:recipe_create' %}" class="nav-link px-2 link-dark">Post New Recipe</a></li>
+              {% else %}
+              <li><a href="{% url 'recipe:registration' %}" class="nav-link px-2 link-dark">Register</a></li>
+              {% endif %}
+              </div>
             </ul>
-    
             {% if request.user.is_authenticated %}
-            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-              <input type="search" class="form-control" placeholder="Search User or Recipe" aria-label="Search">
-            </form>
+
             <div class="dropdown text-end">
               <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                {% if request.user.profile_picture %}
                 <img src="{{ request.user.profile_picture.url }}" alt="mdo" width="32" height="32" class="rounded-circle">
+                {% else %}
+                <img src="{% static 'images/default_user_pic.png' %}" alt="mdo" width="32" height="32" class="rounded-circle">
+                {% endif %}
               </a>
               <ul class="dropdown-menu text-small">
-                <li><a class="dropdown-item" href="#">New project...</a></li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
-                <li><a class="dropdown-item" href="{% url 'user:user_profile' request.user.username %}">Profile</a></li>
+                <li><a class="dropdown-item" href="{% url 'recipe:user_profile' request.user.username %}">Profile</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="{% url 'user:logout'%}">Sign out</a></li>
+                <li><a class="dropdown-item" href="{% url 'recipe:newsfeed' %}">NewsFeed</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{% url 'recipe:logout' %}">Sign out</a></li>
               </ul>
             </div>
             {% endif %}
@@ -67,6 +77,8 @@
         </div>
       </nav>
     </div>
-
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 </html>

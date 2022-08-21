@@ -1,19 +1,100 @@
 {% extends 'base.html'%}
 
+{% block extra_head %} 
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Poppins:weight@100;200;300;400;500;600;700;800&display=swap");
+
+
+body{
+background-color:#eee;
+font-family: "Poppins", sans-serif;
+font-weight: 300;
+}
+
+.height{
+height: 100vh;
+}
+
+
+.search{
+position: relative;
+box-shadow: 0 0 40px rgba(51, 51, 51, .1);
+
+}
+
+.search input{
+
+height: 60px;
+text-indent: 25px;
+border: 2px solid #d6d4d4;
+
+
+}
+
+
+.search input:focus{
+
+box-shadow: none;
+border: 2px solid yellowgreen;
+
+
+}
+
+.search .fa-search{
+
+position: absolute;
+top: 20px;
+left: 16px;
+
+}
+
+.search button{
+
+position: absolute;
+top: 5px;
+right: 5px;
+height: 50px;
+width: 110px;
+background: yellowgreen;
+
+}
+</style>    
+
+{% endblock %}
 {% block content %}
+<form method="get" action="{% url 'recipe:newsfeed' %}">
+  <div class="row d-flex justify-content-center align-items-center">
+
+      <div class="col-md-8">
+
+      <div class="search">
+          <i class="fa fa-search"></i>
+          <input name="qs" type="text" class="form-control" placeholder="Search Recipe">
+          <button class="btn btn-primary">Search</button>
+      </div>
+      
+      </div>
+      
+  </div>
+</form>
+<div class="mb-5"></div>
 {% for recipe in recipes %}
 <div class="col-8 mx-auto">
     <a href="{% url 'recipe:recipe_detail' recipe.pk %}" class="text-decoration-none text-dark">
     <div class="card mb-3">
+      {% if recipe.picture %}
+    <img src="{{ recipe.picture.url }}" class="card-img-top" alt="Wild Landscape"/>
+    {% else %}
     <img src="https://mdbcdn.b-cdn.net/img/new/slides/041.webp" class="card-img-top" alt="Wild Landscape"/>
-    <div class="card-body">
+    {% endif %}
+      <div class="card-body">
       <h3 class="card-title">{{recipe.title}}</h3>
       <h6 class="card-title, text-muted mb-4">Posted by {{recipe.owner}}</h6>
       <p class="card-text">
-        {{recipe.recipe_text | truncatechars:500}}
+        {{recipe.recipe_text | truncatechars:500 | linebreaks}}
       </p>
       <p class="card-text">
-        <small class="text-muted">Posted on {{recipe.date_posted}}}</small>
+        <small class="text-muted">Posted on {{recipe.date_posted}}</small>
       </p>
     </div>
   </div>
