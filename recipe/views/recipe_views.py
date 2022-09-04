@@ -1,45 +1,53 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import View, DetailView, CreateView, UpdateView
+from django.views.generic import View, DetailView, CreateView
 from recipe.models.recipe_models import Rating, Recipe, Comment
-from recipe.utils.recipe_forms import CommentForm, RecipeModelForm
+from recipe.utils.recipe_forms import CommentForm, RecipeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Avg
 
 
 class NewsfeedView(LoginRequiredMixin, View):
-    template_name = "recipe/home.html"
+    template_name = "recipe/home_template.html"
     login_url = reverse_lazy('recipe:login')
 
     def get(self, request, *args, **kwargs):
-        qs = request.GET.get('qs')
+        string_query = request.GET.get('string_query')
         recipes = Recipe.objects.all()
-        if qs:
-            recipes = recipes.filter(title__icontains=qs)
-        return render(request, self.template_name, {"recipes": recipes})
+        filterd_recipies = self.filter_queryset(recipes, string_query).order_by("-id")
+        return render(request, self.template_name, {"recipes": filterd_recipies})
+
+    def filter_queryset(self, queryset, string_query):
+        if string_query:
+            queryset = queryset.filter(title__icontains=string_query)
+        return queryset
 
 
 class RecipeDetailView(LoginRequiredMixin, DetailView):
-    template_name = "recipe/recipe_detail.html"
+    template_name = "recipe/recipe_detail_template.html"
     model = Recipe
     login_url = reverse_lazy('recipe:login')
 
     def get_context_data(self, *args, **kwargs):
         recipe = self.object.id
         context = super().get_context_data(**kwargs)
+        self.add_recipe_details(context,recipe)
+        return context
+    
+    def add_recipe_details(self, context, recipe):
+
         context['comments'] = Comment.objects.filter(recipe=recipe)
         context['has_rated'] = Rating.objects.filter(rating_owner=self.request.user, recipe=recipe).exists()
         context['rating'] = Rating.objects.filter(recipe=recipe).aggregate(Avg('rating_value'))['rating_value__avg']
 
-        return context
     
 
 class RecipeCreateView(LoginRequiredMixin, CreateView):
-    template_name = "recipe/recipe_create.html"
+    template_name = "recipe/recipe_create_template.html"
     success_url = reverse_lazy('recipe:newsfeed')
     login_url = reverse_lazy('recipe:login')
     redirect_field_name = 'recipe:newsfeed'
-    form_class = RecipeModelForm
+    form_class = RecipeForm
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -52,9 +60,9 @@ class RecipeCreateView(LoginRequiredMixin, CreateView):
         return super().form_invalid(form)
 
 class RecipeUpdateView(LoginRequiredMixin, View):
-    template_name = "recipe/recipe_update.html"
+    template_name = "recipe/recipe_update_template.html"
     login_url = reverse_lazy('recipe:login')
-    form_class = RecipeModelForm
+    form_class = RecipeForm
 
     def get_object(self):
         return Recipe.objects.get(id=self.kwargs['id'])
@@ -68,7 +76,6 @@ class RecipeUpdateView(LoginRequiredMixin, View):
         if form.is_valid():
             form.save()
             return redirect('recipe:recipe_detail', pk=self.get_object().id)
-        # print(form.errors)
         return render(request, self.template_name, {'form': form})
 
 class CommentCreateView(LoginRequiredMixin, View):
@@ -83,8 +90,8 @@ class CommentCreateView(LoginRequiredMixin, View):
             comment.save()
 
             return redirect('recipe:recipe_detail', pk=comment.recipe.pk)
-        print(form.errors)
         return redirect('recipe:recipe_detail', pk=request.POST.get('recipe'))
+    
 
 class RatingView(LoginRequiredMixin, View):
     login_url = reverse_lazy('recipe:login')

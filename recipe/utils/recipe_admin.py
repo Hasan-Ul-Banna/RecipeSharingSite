@@ -5,5 +5,3 @@ admin.site.register(Recipe)
 admin.site.register(Rating)
 admin.site.register(Comment)
 
-
-# Register your models here.

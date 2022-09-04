@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from recipe.models.recipe_models import Recipe, Comment, Rating
 
-class RecipeModelForm(ModelForm):
+class RecipeForm(ModelForm):
     class Meta:
         model = Recipe
         exclude = ['owner']

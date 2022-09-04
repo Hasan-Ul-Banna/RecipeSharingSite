@@ -15,7 +15,6 @@ urlpatterns = [
     path('rating/<int:value>/<int:id>/', RatingView.as_view(), name ='rating_post'),
     path('comment-delete/<int:id>/', CommentDeleteView.as_view(), name ='comment_delete'),
     path('recipe-delete/<int:id>/', RecipeDeleteView.as_view(), name ='recipe_delete'),
-
     path('profile/<str:username>/', UserProfileView.as_view(), name ='user_profile'),
     path('login/', LoginView.as_view(), name ='login'),
     path('registration/', RegistrationView.as_view(), name ='registration'),
