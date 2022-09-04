@@ -69,7 +69,7 @@ def logoutView(request):
     return redirect('recipe:login')
 
 class UserProfileUpdateView(LoginRequiredMixin, View):
-    template_name = "user/user_update.html"
+    template_name = "user/user_update_template.html"
     form_class = UserUpdateForm
     login_url = reverse_lazy('recipe:login')
 
